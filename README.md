@@ -64,7 +64,7 @@ Now wire your React components, to mouse events onClick or onContextMenu
 ```  
 
 ### Open ContextMenu without event 
-If you want to trigger opening the Context Menu but you don't have an event you can, but you need to provide the position to display the
+If you want to trigger opening the Context Menu but you don't have an event you can, but you need to provide the position to display the Context Menu as `position`
 ```javascript
 const openMenuWithOutEvent = (x: number, y: number) => {
     // Define your menu as a JSON object
