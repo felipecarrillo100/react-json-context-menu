@@ -1,6 +1,19 @@
 # react-json-context-menu
 A React Typescript class component to facilitate the integration of newer versions of react-contexify with my existing applications
 
+## Use case
+The react-contexify library is an excellent library designed for displaying context menus. However, it can be inconvenient to create a menu from React component every I need a new Context Menu. 
+For my purposes, it is far more convenient to define a menu using a JSON object, allowing me to easily call and display the context menu from anywhere.  
+
+Menus are defined as an array of items, for instance:
+```TypeScript
+    [
+        { label: 'Option 1', title: 'Option 1', action: () => console.log('Option 1 selected'), disabled: true },
+        { separator: true },
+        { label: 'Option 2', title: 'Option 2', action: () => console.log('Option 2 selected') }
+    ]
+```
+
 ## How to install:
 npm install react-json-context-menu react-contexify
 
@@ -9,7 +22,7 @@ Import code
 ```Typescript 
 import {JSONContextMenuProvider} from "react-json-context-menu";
 ```
-Import styles directly from `react-contexify` library:
+Import the styles directly from `react-contexify` library:
 ```
 import 'react-contexify/ReactContexify.css';
 ```

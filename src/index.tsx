@@ -40,6 +40,7 @@ interface ContextMenuWithId {
 }
 
 interface ContextMenuSubmenu {
+  iconClass?: string,
   icon?: React.ReactNode,
   label: string;
   title?: string;
@@ -205,7 +206,15 @@ const RenderJSONMenu: React.FC<RenderJSONMenuProps> = (props: RenderJSONMenuProp
               const itemAsSubMenu = item as ContextMenuSubmenu;
               return (
                   // @ts-ignore
-                  <Submenu label={(<span>itemAsSubMenu.label</span>)} title={itemAsSubMenu.title}
+                  <Submenu label={(
+                      <div>
+                        {itemAsSubMenu.iconClass ?
+                            <LeftSlot>{renderIcon(itemAsSubMenu.iconClass)}</LeftSlot> :
+                            <LeftSlot>{itemAsSubMenu.icon}</LeftSlot>
+                        }
+                        <span>{itemAsSubMenu.label}</span>
+                      </div>
+                  )} title={itemAsSubMenu.title}
                            disabled={itemAsSubMenu.disabled}
                            hidden={itemAsSubMenu.hidden}
                            key={index}
