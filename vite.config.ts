@@ -10,6 +10,7 @@ export default defineConfig({
             fileName: (format) => `react-json-context-menu.${format}.js`,
             formats: ['es', 'cjs'],
         },
+        outDir: 'dist',
         rollupOptions: {
             external: ['react', 'react-dom', 'react-contexify'],
             output: {
@@ -20,5 +21,9 @@ export default defineConfig({
                 },
             },
         },
+    },
+    // Optional: ensures React DevTools doesn't trip on symbols
+    define: {
+        'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV || 'production'),
     },
 });

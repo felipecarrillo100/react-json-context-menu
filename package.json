@@ -1,7 +1,7 @@
 {
   "name": "react-json-context-menu",
   "description": "A React Typescript class component to facilitate the integration of newer versions of react-contexify (>=6.0.0) with my own UI applications",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "main": "dist/react-json-context-menu.cjs.js",
   "module": "dist/react-json-context-menu.es.js",
   "types": "dist/types/index.d.ts",
