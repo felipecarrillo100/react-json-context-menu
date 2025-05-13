@@ -86,10 +86,12 @@ const LeftSlot: React.FC<LeftSlotProps> = ({ children, width = 20 }) => {
 
 // ********************************************
 //  UncheckedSquareIcon and CheckedSquareIcon
+const SVGCheckboxSize = 18;
+
 const UncheckedSquareIcon = () => (
     <svg
-        width="16"
-        height="16"
+        width={SVGCheckboxSize}
+        height={SVGCheckboxSize}
         viewBox="0 0 24 24"
         fill="none"
         stroke="currentColor"
@@ -100,11 +102,10 @@ const UncheckedSquareIcon = () => (
     </svg>
 );
 
-
 const CheckedSquareIcon = () => (
     <svg
-        width="16"
-        height="16"
+        width={SVGCheckboxSize}
+        height={SVGCheckboxSize}
         viewBox="0 0 24 24"
         fill="none"
         stroke="currentColor"
