@@ -1,11 +1,11 @@
 import {
   Item,
-  type ItemParams,
-  Menu, type MenuAnimation, RightSlot,
+  ItemParams,
+  Menu, MenuAnimation, RightSlot,
   Separator,
-  Submenu, type Theme, type TriggerEvent, useContextMenu,
+  Submenu, Theme, TriggerEvent, useContextMenu,
 } from "react-contexify";
-import {createContext, forwardRef, type ReactNode, useContext, useImperativeHandle, useRef, useState} from "react";
+import {createContext, forwardRef, ReactNode, useContext, useImperativeHandle, useRef, useState} from "react";
 import * as React from "react";
 
 const GLOBAL_CONTEXT_MENU_ID = "Unique-ID-Global-Context-Menu";
@@ -122,9 +122,10 @@ interface RenderJSONMenuProps {
   onClick?: (p: ItemParams) => void;
   iconProviderFunction?: (iconClass?: string) => React.ReactNode;
 }
+
 const RenderJSONMenu: React.FC<RenderJSONMenuProps> = (props: RenderJSONMenuProps)   => {
   const {items, onClick} = props;
- // Determine type
+  // Determine type
   const getContextMenuItemType = (item: ContextMenuItem): 'action_with_id' | 'action' | 'submenu' | 'separator' | `unknown` => {
     if ('separator' in item) {
       return 'separator';
@@ -144,79 +145,83 @@ const RenderJSONMenu: React.FC<RenderJSONMenuProps> = (props: RenderJSONMenuProp
   }
 
   return (
-      items.filter(i => getContextMenuItemType(i) !== "unknown").map((item, index) => {
-        const type = getContextMenuItemType(item);
-        switch (type) {
-          case "action_with_id": {
-            const itemWithId = item as ContextMenuWithId;
-            return (
-                <Item id={itemWithId.id} closeOnClick={itemWithId.closeOnClick}
-                      disabled={itemWithId.disabled}
-                      hidden={itemWithId.hidden}
-                      onClick={(e: any) => {
-                        if (typeof onClick === "function") onClick(e)
-                      }}
-                      title={itemWithId.title}
-                      key={index}
-                      style={itemWithId.style}
-                      data={itemWithId.data}
-                >
-                  {itemWithId.iconClass ?
-                      <LeftSlot>{renderIcon(itemWithId.iconClass)}</LeftSlot> :
-                      <LeftSlot>{itemWithId.icon}</LeftSlot>
-                  }
-                  {itemWithId.label}
-                  {typeof itemWithId.checked !== "undefined" &&
-                      <RightSlot style={{color: "inherit"}}>
-                        {itemWithId.checked ? <CheckedSquareIcon/> : <UncheckedSquareIcon/>}
-                      </RightSlot>}
-                </Item>)
+      <>
+        {items.filter(i => getContextMenuItemType(i) !== "unknown").map((item, index) => {
+          const type = getContextMenuItemType(item);
+          switch (type) {
+            case "action_with_id": {
+              const itemWithId = item as ContextMenuWithId;
+              return (
+                  <Item id={itemWithId.id} closeOnClick={itemWithId.closeOnClick}
+                        disabled={itemWithId.disabled}
+                        hidden={itemWithId.hidden}
+                        onClick={(e: any) => {
+                          if (typeof onClick === "function") onClick(e)
+                        }}
+                        title={itemWithId.title}
+                        key={index}
+                        style={itemWithId.style}
+                        data={itemWithId.data}
+                  >
+                    {itemWithId.iconClass ?
+                        <LeftSlot>{renderIcon(itemWithId.iconClass)}</LeftSlot> :
+                        <LeftSlot>{itemWithId.icon}</LeftSlot>
+                    }
+                    {itemWithId.label}
+                    {typeof itemWithId.checked !== "undefined" &&
+                        <RightSlot style={{color: "inherit"}}>
+                          {itemWithId.checked ? <CheckedSquareIcon/> : <UncheckedSquareIcon/>}
+                        </RightSlot>}
+                  </Item>)
+            }
+            case "action": {
+              const itemAsAction = item as ContextMenuAction;
+              return (
+                  <Item closeOnClick={itemAsAction.closeOnClick}
+                        disabled={itemAsAction.disabled}
+                        hidden={itemAsAction.hidden}
+                        onClick={(e: any) => {
+                          if (typeof itemAsAction.action === "function") itemAsAction.action(e);
+                        }}
+                        title={itemAsAction.title}
+                        key={index}
+                        style={itemAsAction.style}
+                        data={itemAsAction.data}
+                  >
+                    {itemAsAction.iconClass ?
+                        <LeftSlot>{renderIcon(itemAsAction.iconClass)}</LeftSlot> :
+                        <LeftSlot>{itemAsAction.icon}</LeftSlot>
+                    }
+                    {itemAsAction.label}
+                    {typeof itemAsAction.checked !== "undefined" &&
+                        <RightSlot style={{color: "inherit"}}>
+                          {itemAsAction.checked ? <CheckedSquareIcon/> : <UncheckedSquareIcon/>}
+                        </RightSlot>}
+                  </Item>)
+            }
+            case "separator":
+              return <Separator key={index}/>
+            case "submenu": {
+              const itemAsSubMenu = item as ContextMenuSubmenu;
+              return (
+                  // @ts-ignore
+                  <Submenu label={(<span>itemAsSubMenu.label</span>)} title={itemAsSubMenu.title}
+                           disabled={itemAsSubMenu.disabled}
+                           hidden={itemAsSubMenu.hidden}
+                           key={index}
+                           style={itemAsSubMenu.style}
+                  >
+                    {<RenderJSONMenu items={itemAsSubMenu.items} onClick={onClick}
+                                     iconProviderFunction={props.iconProviderFunction}/>}
+                  </Submenu>)
+            }
+            default:
+              return <></>
           }
-          case "action": {
-            const itemAsAction = item as ContextMenuAction;
-            return (
-                <Item closeOnClick={itemAsAction.closeOnClick}
-                      disabled={itemAsAction.disabled}
-                      hidden={itemAsAction.hidden}
-                      onClick={(e: any) => {
-                        if (typeof itemAsAction.action === "function") itemAsAction.action(e);
-                      }}
-                      title={itemAsAction.title}
-                      key={index}
-                      style={itemAsAction.style}
-                      data={itemAsAction.data}
-                >
-                  {itemAsAction.iconClass ?
-                      <LeftSlot>{renderIcon(itemAsAction.iconClass)}</LeftSlot> :
-                      <LeftSlot>{itemAsAction.icon}</LeftSlot>
-                  }
-                  {itemAsAction.label}
-                  {typeof itemAsAction.checked !== "undefined" &&
-                      <RightSlot style={{color: "inherit"}}>
-                        {itemAsAction.checked ? <CheckedSquareIcon/> : <UncheckedSquareIcon/>}
-                      </RightSlot>}
-                </Item>)
-          }
-          case "separator":
-            return <Separator key={index}/>
-          case "submenu": {
-            const itemAsSubMenu = item as ContextMenuSubmenu;
-            return (
-                // @ts-ignore
-                <Submenu label={(<span>itemAsSubMenu.label</span>)} title={itemAsSubMenu.title}
-                         disabled={itemAsSubMenu.disabled}
-                         hidden={itemAsSubMenu.hidden}
-                         key={index}
-                         style={itemAsSubMenu.style}
-                >
-                  <RenderJSONMenu items={itemAsSubMenu.items} onClick={onClick}
-                                  iconProviderFunction={props.iconProviderFunction}/>
-                </Submenu>)
-          }
-          default:
-            return <></>
+        })
         }
-      }));
+      </>
+  );
 }
 
 
@@ -351,11 +356,11 @@ export const JSONContextMenu : React.FC<JSONContextMenuProps> = (props: JSONCont
   />)
 }
 
-type MyProviderProps = {
+type JSONContextMenuProviderProps = {
   children: ReactNode;
 };
 
-export const JSONContextMenuProvider: React.FC<MyProviderProps> = ({ children }: MyProviderProps) => {
+export const JSONContextMenuProvider: React.FC<JSONContextMenuProviderProps> = ({ children }: JSONContextMenuProviderProps) => {
   const jsonContextMenu = useRef(null as JSONContextMenuRef | null);
   const [items, setItems] = useState<ContextMenuItems>([])
 
